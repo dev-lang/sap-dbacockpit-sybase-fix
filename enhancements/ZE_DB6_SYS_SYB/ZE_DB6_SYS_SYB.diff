@@ -1,0 +1,320 @@
+# Diff: CL_DB6_SYS->SYNCHRONIZE_SYSTEM_DATA (original SAP, SAP_BASIS 731, 08.09.2011)
+#   vs. mejora implícita ZE_DB6_SYS_SYB (overwrite-method)
+#
+# Cambio funcional (1 línea):  when 'ORA'.  ->  when 'ORA' or 'SYB'.
+# Resto: ajustes para que el código compile dentro de la mejora
+#   me->                  -> core_object->                   (102)
+#   contype_*             -> cl_db6_sys=>contype_*           (14)
+#   get_connection_type(  -> core_object->get_connection_type( (6)
+#   is_supported_*        -> core_object->is_supported_*     (4)
+#   sysentry_*            -> cl_db6_sys=>sysentry_*          (1)
+#   systype_*             -> cl_db6_sys=>systype_*           (3)
+#   = me )                -> = core_object )                 (2)
+#   modify table systems  -> modify table cl_db6_sys=>systems (1)
+#   method/endmethod      -> comentados con *                (2)
+# Total: 122 de 344 líneas modificadas.
+#
+--- CL_DB6_SYS->SYNCHRONIZE_SYSTEM_DATA (original SAP)
++++ ZE_DB6_SYS_SYB (IOW_ZE_DB6_SYS_SYB~SYNCHRONIZE_SYSTEM_DATA)
+@@ -1 +1 @@
+-method synchronize_system_data .
++*method synchronize_system_data .
+@@ -30 +30 @@
+-  old_sys_data = me->sys_data.
++  old_sys_data = core_object->sys_data.
+@@ -32,2 +32,2 @@
+-  case me->get_connection_type( ).
+-    when contype_remote.
++  case core_object->get_connection_type( ).
++    when cl_db6_sys=>contype_remote.
+@@ -35,9 +35,9 @@
+-          con_sys_data = me->con_ref->get_system_basics( ).
+-          me->sys_data-realsid    = con_sys_data-realsid.
+-          me->sys_data-dbsys      = con_sys_data-dbsys.
+-          me->sys_data-dbrel      = con_sys_data-dbrel.
+-          me->sys_data-saprel     = con_sys_data-saprel.
+-          me->sys_data-dbhost     = con_sys_data-dbhost.
+-          me->sys_data-cockrel    = con_sys_data-cockrel.
+-          me->sys_data-schemaname = con_sys_data-schemaname.
+-          me->sys_data-dbsid      = con_sys_data-dbsid.
++          con_sys_data = core_object->con_ref->get_system_basics( ).
++          core_object->sys_data-realsid    = con_sys_data-realsid.
++          core_object->sys_data-dbsys      = con_sys_data-dbsys.
++          core_object->sys_data-dbrel      = con_sys_data-dbrel.
++          core_object->sys_data-saprel     = con_sys_data-saprel.
++          core_object->sys_data-dbhost     = con_sys_data-dbhost.
++          core_object->sys_data-cockrel    = con_sys_data-cockrel.
++          core_object->sys_data-schemaname = con_sys_data-schemaname.
++          core_object->sys_data-dbsid      = con_sys_data-dbsid.
+@@ -52 +52 @@
+-    when contype_remote_via_rfc.
++    when cl_db6_sys=>contype_remote_via_rfc.
+@@ -54 +54 @@
+-        destination me->sys_data-rfcdest
++        destination core_object->sys_data-rfcdest
+@@ -56,2 +56,2 @@
+-          rfcdest               = me->sys_data-rfcdest
+-          con_name              = me->sys_data-dbcname
++          rfcdest               = core_object->sys_data-rfcdest
++          con_name              = core_object->sys_data-dbcname
+@@ -76 +76 @@
+-              sysid         = me->sys_data-sysid
++              sysid         = core_object->sys_data-sysid
+@@ -86 +86 @@
+-                sysid         = me->sys_data-sysid
++                sysid         = core_object->sys_data-sysid
+@@ -89 +89 @@
+-            me->sys_data-realsid = mss_connection_data-dbname.
++            core_object->sys_data-realsid = mss_connection_data-dbname.
+@@ -91,7 +91,7 @@
+-            me->sys_data-dbrel = mss_sqlrel(10).
+-            me->sys_data-saprel = mss_connection_data-saprelease.
+-            me->sys_data-dbhost = mss_connection_data-hostname.
+-            me->sys_data-schemaname = mss_connection_data-dbschema.
+-            me->sys_data-dbsid = mss_connection_data-dbname.
+-            me->sys_data-cockrel    = '711'.
+-            me->sys_data-dbsys      = 'MSS'.
++            core_object->sys_data-dbrel = mss_sqlrel(10).
++            core_object->sys_data-saprel = mss_connection_data-saprelease.
++            core_object->sys_data-dbhost = mss_connection_data-hostname.
++            core_object->sys_data-schemaname = mss_connection_data-dbschema.
++            core_object->sys_data-dbsid = mss_connection_data-dbname.
++            core_object->sys_data-cockrel    = '711'.
++            core_object->sys_data-dbsys      = 'MSS'.
+@@ -105 +105 @@
+-              sysid         = me->sys_data-sysid
++              sysid         = core_object->sys_data-sysid
+@@ -108 +108 @@
+-    when contype_remote_and_rfc.
++    when cl_db6_sys=>contype_remote_and_rfc.
+@@ -110,2 +110,2 @@
+-          rfc_sys_data = me->rfc_ref->get_system_basics( ).
+-          con_sys_data = me->con_ref->get_system_basics( ).
++          rfc_sys_data = core_object->rfc_ref->get_system_basics( ).
++          con_sys_data = core_object->con_ref->get_system_basics( ).
+@@ -118,8 +118,8 @@
+-          me->sys_data-realsid    = con_sys_data-realsid.
+-          me->sys_data-dbsys      = con_sys_data-dbsys.
+-          me->sys_data-dbrel      = con_sys_data-dbrel.
+-          me->sys_data-saprel     = con_sys_data-saprel.
+-          me->sys_data-dbhost     = con_sys_data-dbhost.
+-          me->sys_data-cockrel    = con_sys_data-cockrel.
+-          me->sys_data-schemaname = con_sys_data-schemaname.
+-          me->sys_data-dbsid      = con_sys_data-dbsid.
++          core_object->sys_data-realsid    = con_sys_data-realsid.
++          core_object->sys_data-dbsys      = con_sys_data-dbsys.
++          core_object->sys_data-dbrel      = con_sys_data-dbrel.
++          core_object->sys_data-saprel     = con_sys_data-saprel.
++          core_object->sys_data-dbhost     = con_sys_data-dbhost.
++          core_object->sys_data-cockrel    = con_sys_data-cockrel.
++          core_object->sys_data-schemaname = con_sys_data-schemaname.
++          core_object->sys_data-dbsid      = con_sys_data-dbsid.
+@@ -133 +133 @@
+-    when contype_rfc.
++    when cl_db6_sys=>contype_rfc.
+@@ -135,9 +135,9 @@
+-          rfc_sys_data = me->rfc_ref->get_system_basics( ).
+-          me->sys_data-realsid    = rfc_sys_data-realsid.
+-          me->sys_data-dbsys      = rfc_sys_data-dbsys.
+-          me->sys_data-dbrel      = rfc_sys_data-dbrel.
+-          me->sys_data-saprel     = rfc_sys_data-saprel.
+-          me->sys_data-dbhost     = rfc_sys_data-dbhost.
+-          me->sys_data-cockrel    = rfc_sys_data-cockrel.
+-          me->sys_data-schemaname = rfc_sys_data-schemaname.
+-          me->sys_data-dbsid      = rfc_sys_data-dbsid.
++          rfc_sys_data = core_object->rfc_ref->get_system_basics( ).
++          core_object->sys_data-realsid    = rfc_sys_data-realsid.
++          core_object->sys_data-dbsys      = rfc_sys_data-dbsys.
++          core_object->sys_data-dbrel      = rfc_sys_data-dbrel.
++          core_object->sys_data-saprel     = rfc_sys_data-saprel.
++          core_object->sys_data-dbhost     = rfc_sys_data-dbhost.
++          core_object->sys_data-cockrel    = rfc_sys_data-cockrel.
++          core_object->sys_data-schemaname = rfc_sys_data-schemaname.
++          core_object->sys_data-dbsid      = rfc_sys_data-dbsid.
+@@ -151 +151 @@
+-    when contype_local.
++    when cl_db6_sys=>contype_local.
+@@ -154 +154 @@
+-          sysid         = me->sys_data-realsid
++          sysid         = core_object->sys_data-realsid
+@@ -156,4 +156,4 @@
+-          dbrel         = me->sys_data-dbrel
+-          basrel        = me->sys_data-saprel
+-          dbserver      = me->sys_data-dbhost
+-          cockrel       = me->sys_data-cockrel
++          dbrel         = core_object->sys_data-dbrel
++          basrel        = core_object->sys_data-saprel
++          dbserver      = core_object->sys_data-dbhost
++          cockrel       = core_object->sys_data-cockrel
+@@ -161 +161 @@
+-          dbname        = me->sys_data-dbsid
++          dbname        = core_object->sys_data-dbsid
+@@ -172 +172 @@
+-            sysid         = me->sys_data-sysid
++            sysid         = core_object->sys_data-sysid
+@@ -175,4 +175,4 @@
+-        me->sys_data-dbsys      = dbsys.
+-        me->sys_data-schemaname = schemaname.
+-        if me->sys_data-dbsys = 'ADA'.
+-          me->sys_data-dbcname = cl_db6_sys=>local_sysid.
++        core_object->sys_data-dbsys      = dbsys.
++        core_object->sys_data-schemaname = schemaname.
++        if core_object->sys_data-dbsys = 'ADA'.
++          core_object->sys_data-dbcname = cl_db6_sys=>local_sysid.
+@@ -182 +182 @@
+-    when contype_cross_schema.
++    when cl_db6_sys=>contype_cross_schema.
+@@ -185 +185 @@
+-          sysid         = me->sys_data-realsid
++          sysid         = core_object->sys_data-realsid
+@@ -187,4 +187,4 @@
+-          dbrel         = me->sys_data-dbrel
+-          dbserver      = me->sys_data-dbhost
+-          cockrel       = me->sys_data-cockrel
+-          dbname        = me->sys_data-dbsid
++          dbrel         = core_object->sys_data-dbrel
++          dbserver      = core_object->sys_data-dbhost
++          cockrel       = core_object->sys_data-cockrel
++          dbname        = core_object->sys_data-dbsid
+@@ -201 +201 @@
+-            sysid         = me->sys_data-sysid
++            sysid         = core_object->sys_data-sysid
+@@ -204 +204 @@
+-        me->sys_data-dbsys      = dbsys.
++        core_object->sys_data-dbsys      = dbsys.
+@@ -210 +210 @@
+-  if me->sys_data-cockrel is initial.
++  if core_object->sys_data-cockrel is initial.
+@@ -214 +214 @@
+-        sysid       = me->sys_data-sysid
++        sysid       = core_object->sys_data-sysid
+@@ -218,8 +218,8 @@
+-  if ( get_connection_type( )               = contype_local        and
+-       is_supported_db( me->sys_data-dbsys )             = abap_false               ) or
+-     ( get_connection_type( )               = contype_rfc          and
+-       is_supported_rfc_db( me->sys_data-dbsys )         = abap_false               ) or
+-     ( get_connection_type( )               = contype_remote       and
+-       cl_dba_dbcon=>is_supported_db( me->sys_data-dbsys ) = abap_false               ) or
+-     ( get_connection_type( )               = contype_cross_schema and
+-       is_supported_cross_schema( me->sys_data-dbsys )   = abap_false               ).
++  if ( core_object->get_connection_type( )               = cl_db6_sys=>contype_local        and
++       core_object->is_supported_db( core_object->sys_data-dbsys )             = abap_false               ) or
++     ( core_object->get_connection_type( )               = cl_db6_sys=>contype_rfc          and
++       core_object->is_supported_rfc_db( core_object->sys_data-dbsys )         = abap_false               ) or
++     ( core_object->get_connection_type( )               = cl_db6_sys=>contype_remote       and
++       cl_dba_dbcon=>is_supported_db( core_object->sys_data-dbsys ) = abap_false               ) or
++     ( core_object->get_connection_type( )               = cl_db6_sys=>contype_cross_schema and
++       core_object->is_supported_cross_schema( core_object->sys_data-dbsys )   = abap_false               ).
+@@ -229 +229 @@
+-        sysid       = me->sys_data-sysid
++        sysid       = core_object->sys_data-sysid
+@@ -233,5 +233,5 @@
+-  if get_connection_type( ) = contype_remote and
+-     is_supported_db_release( dbsys   = me->sys_data-dbsys
+-                              contype = contype_remote
+-                              dbrel = me->sys_data-dbrel ) = abap_false.
+-    dbsys = me->sys_data-dbsys.
++  if core_object->get_connection_type( ) = cl_db6_sys=>contype_remote and
++     core_object->is_supported_db_release( dbsys   = core_object->sys_data-dbsys
++                              contype = cl_db6_sys=>contype_remote
++                              dbrel = core_object->sys_data-dbrel ) = abap_false.
++    dbsys = core_object->sys_data-dbsys.
+@@ -241,2 +241,2 @@
+-        sysid       = me->sys_data-sysid
+-        dbrel       = me->sys_data-dbrel
++        sysid       = core_object->sys_data-sysid
++        dbrel       = core_object->sys_data-dbrel
+@@ -244 +244 @@
+-        contype     = contype_remote
++        contype     = cl_db6_sys=>contype_remote
+@@ -247,2 +247,2 @@
+-  if get_connection_type( ) = contype_cross_schema.
+-    clear me->sys_data-saprel.
++  if core_object->get_connection_type( ) = cl_db6_sys=>contype_cross_schema.
++    clear core_object->sys_data-saprel.
+@@ -251 +251 @@
+-  me->sys_data-entrystate = sysentry_complete.
++  core_object->sys_data-entrystate = cl_db6_sys=>sysentry_complete.
+@@ -253,2 +253,2 @@
+-  if me->sys_data-saprel is initial.
+-    me->sys_data-entrytype = systype_native.
++  if core_object->sys_data-saprel is initial.
++    core_object->sys_data-entrytype = cl_db6_sys=>systype_native.
+@@ -256 +256 @@
+-    me->sys_data-entrytype = systype_r3.
++    core_object->sys_data-entrytype = cl_db6_sys=>systype_r3.
+@@ -260 +260 @@
+-  case me->sys_data-dbsys.
++  case core_object->sys_data-dbsys.
+@@ -264,2 +264,2 @@
+-      if me->sys_data-db_opsys is initial.
+-        me->sys_data-db_opsys = db6cc_opsys_unknown.
++      if core_object->sys_data-db_opsys is initial.
++        core_object->sys_data-db_opsys = db6cc_opsys_unknown.
+@@ -272 +272 @@
+-          partition = cl_db6_syscat=>get_1st_partition( sys_ref = me ).
++          partition = cl_db6_syscat=>get_1st_partition( sys_ref = core_object ).
+@@ -276 +276 @@
+-                                    connection = me->sys_data-dbcname
++                                    connection = core_object->sys_data-dbcname
+@@ -280 +280 @@
+-            me->sys_data-dbsid = <db6pmsd>-dbname.
++            core_object->sys_data-dbsid = <db6pmsd>-dbname.
+@@ -283 +283 @@
+-                me->sys_data-db_opsys = db6cc_opsys_windows_nt.
++                core_object->sys_data-db_opsys = db6cc_opsys_windows_nt.
+@@ -285 +285 @@
+-                me->sys_data-db_opsys = db6cc_opsys_sun.
++                core_object->sys_data-db_opsys = db6cc_opsys_sun.
+@@ -287 +287 @@
+-                me->sys_data-db_opsys = db6cc_opsys_aix.
++                core_object->sys_data-db_opsys = db6cc_opsys_aix.
+@@ -289 +289 @@
+-                me->sys_data-db_opsys = db6cc_opsys_linux.
++                core_object->sys_data-db_opsys = db6cc_opsys_linux.
+@@ -291 +291 @@
+-                me->sys_data-db_opsys = db6cc_opsys_hpux.
++                core_object->sys_data-db_opsys = db6cc_opsys_hpux.
+@@ -302,3 +302,3 @@
+-      me->sys_data-db_opsys = db6cc_opsys_windows_nt.
+-      me->sys_data-entrytype = systype_native.  " This is to avoid error in DETERMINE_SYSTEM_TYPE when the schema is dbo
+-    when 'ORA'.
++      core_object->sys_data-db_opsys = db6cc_opsys_windows_nt.
++      core_object->sys_data-entrytype = cl_db6_sys=>systype_native.  " This is to avoid error in DETERMINE_SYSTEM_TYPE when the schema is dbo
++    when 'ORA' or 'SYB'.
+@@ -309 +309 @@
+-          sysid       = me->sys_data-sysid
++          sysid       = core_object->sys_data-sysid
+@@ -313 +313 @@
+-  me->migrate_old_entries( ).
++  core_object->migrate_old_entries( ).
+@@ -316 +316 @@
+-      me->determine_system_type( ).
++      core_object->determine_system_type( ).
+@@ -321 +321 @@
+-          sysid       = me->sys_data-sysid
++          sysid       = core_object->sys_data-sysid
+@@ -326,5 +326,5 @@
+-  me->adm_data-synchronized = abap_true.
+-  if me->sys_data <> old_sys_data.
+-    me->adm_data-changed = abap_true.
+-    me->adm_data-moddate = sy-datum.
+-    me->adm_data-modtime = sy-uzeit.
++  core_object->adm_data-synchronized = abap_true.
++  if core_object->sys_data <> old_sys_data.
++    core_object->adm_data-changed = abap_true.
++    core_object->adm_data-moddate = sy-datum.
++    core_object->adm_data-modtime = sy-uzeit.
+@@ -332,3 +332,3 @@
+-    move-corresponding me->sys_data to buffered_sysdata.
+-    move-corresponding me->adm_data to buffered_sysdata.
+-    modify table systems from buffered_sysdata transporting synchronized.
++    move-corresponding core_object->sys_data to buffered_sysdata.
++    move-corresponding core_object->adm_data to buffered_sysdata.
++    modify table cl_db6_sys=>systems from buffered_sysdata transporting synchronized.
+@@ -338 +338 @@
+-      dbh_setup = cl_dba_dbh_setup=>get_instance( sys_ref = me ).
++      dbh_setup = cl_dba_dbh_setup=>get_instance( sys_ref = core_object ).
+@@ -344 +344 @@
+-endmethod.
++*endmethod.

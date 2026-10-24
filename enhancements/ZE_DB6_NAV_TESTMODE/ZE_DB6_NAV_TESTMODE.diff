@@ -1,0 +1,58 @@
+# ZE_DB6_NAV_TESTMODE ($TMP) - Overwrite-Method CL_DB6_TREE_NAVIGATOR->SET_TEST_MODE
+# SAP BAS, SAP_BASIS 731 / ASE 15.7 - 24.10.2026
+# Motivo: DBACOCKPIT arrancado sin sistema -> SET_TEST_MODE pasa ME->SYSTEM (NULL)
+#         a CL_DBA_RDI=>GET_INSTANCE -> dump OBJECTS_OBJREF_NOT_ASSIGNED.
+# Cambio: salida temprana si no hay sistema. El resto es el metodo estandar
+#         con "me->" reemplazado por "core_object->" (requisito del overwrite).
+# Estandar reconstruido desde SE24 (puede diferir en espacios/mayusculas).
+--- a/CL_DB6_TREE_NAVIGATOR->SET_TEST_MODE (estandar)
++++ b/ZE_DB6_NAV_TESTMODE (Overwrite-Method)
+@@ -4,29 +4,35 @@
+   data: ex_dba_rdi  type ref to cx_dba_rdi.
+   data: ex_dba_root type ref to cx_dba_root.
+ 
+-  me->test_mode = test_mode.
++  core_object->test_mode = test_mode.
+ 
+-  if me->test_ref is not bound.
+-    me->test_ref = cl_dba_test_handler=>get_instance( ).
++* Sin sistema seleccionado (arranque web sin sistema por defecto)
++* no hay back-end RDI: CL_DBA_RDI=>GET_INSTANCE daria dump
++  if core_object->system is not bound.
++    return.
++  endif.
++
++  if core_object->test_ref is not bound.
++    core_object->test_ref = cl_dba_test_handler=>get_instance( ).
+ 
+     try.
+-        lr_rdi = cl_dba_rdi=>get_instance( me->system ).
+-        lr_rdi->query->set_test_handler( me->test_ref ).
++        lr_rdi = cl_dba_rdi=>get_instance( core_object->system ).
++        lr_rdi->query->set_test_handler( core_object->test_ref ).
+       catch cx_dba_rdi into ex_dba_rdi.                 "#EC NO_HANDLER
+-        me->msgwindow->add_exception_class( ex_dba_rdi ).
++        core_object->msgwindow->add_exception_class( ex_dba_rdi ).
+     endtry.
+   endif.
+ 
+-  if me->test_ref is bound.
++  if core_object->test_ref is bound.
+     try.
+-        me->test_ref->set_test_mode( sys_ref   = me->system
+-                                     time_from = me->selection_timeframe->from_date &&
+-                                                 me->selection_timeframe->from_time
+-                                     time_to   = me->selection_timeframe->to_date &&
+-                                                 me->selection_timeframe->to_time
++        core_object->test_ref->set_test_mode( sys_ref   = core_object->system
++                                     time_from = core_object->selection_timeframe->from_date &&
++                                                 core_object->selection_timeframe->from_time
++                                     time_to   = core_object->selection_timeframe->to_date &&
++                                                 core_object->selection_timeframe->to_time
+                                      test_mode = test_mode ).
+       catch cx_dba_root into ex_dba_root.
+-        me->msgwindow->add_exception_class( ex_dba_root ).
++        core_object->msgwindow->add_exception_class( ex_dba_root ).
+     endtry.
+   endif.
+ 
