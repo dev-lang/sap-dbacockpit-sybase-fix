@@ -1,4 +1,4 @@
-# sap-dbacockpit-sybase-fix
+# DBACOCKPIT en SAP NetWeaver 7.31 sobre Sybase ASE – correcciones
 
 Correcciones para hacer funcionar **DBACOCKPIT** (dentro de SAP GUI y con "Start in Web Browser") en SAP NetWeaver 7.31 sobre Sybase ASE, sin notas de SAP: mejoras implícitas en ABAP, diffs contra el código estándar y guías paso a paso.
 
@@ -21,7 +21,7 @@ Todas son objetos locales (`$TMP`) y no modifican el código estándar.
 | [`ZE_DB6_NAV_TESTMODE`](enhancements/ZE_DB6_NAV_TESTMODE/) | `CL_DB6_TREE_NAVIGATOR→SET_TEST_MODE` | Overwrite-Method | Dump `OBJECTS_OBJREF_NOT_ASSIGNED` en `CL_DBA_RDI=>GET_INSTANCE` cuando el cockpit arranca sin sistema (navegador externo, usuario sin sistema por defecto). |
 | [`ZE_UR_UA_VERSION100`](enhancements/ZE_UR_UA_VERSION100/) | `CLUR_NW7_USER_AGENT_INFO→SET_USER_AGENT_INFO` y `→SET_LIGHTSPEED_INFO` | Post-Methods | HTTP 500 "This browser is not supported": IE11 no manda "MSIE" en el user agent y las reglas comparan la versión como texto (`'11.0' < '6.0'`, `'155.0' < '8.0'`). |
 
-Cada carpeta tiene el `.diff` contra el estándar y, para las dos últimas, el `.abap` completo de la implementación.
+Cada carpeta tiene el `.abap` completo de la implementación y el `.diff` contra el método estándar.
 
 ## Guías
 
@@ -43,7 +43,7 @@ Después de subir un support package de SAP_BASIS, revisar las tres en **SPAU_EN
 ├── docs/
 │   └── SAP731_SYBASE_DBACOCKPIT_WEBBROWSER_WIN11_IE11_FIX.md
 └── enhancements/
-    ├── ZE_DB6_SYS_SYB/         ZE_DB6_SYS_SYB.diff
+    ├── ZE_DB6_SYS_SYB/         .abap + .diff
     ├── ZE_DB6_NAV_TESTMODE/    .abap + .diff
     └── ZE_UR_UA_VERSION100/    .abap + .diff
 ```
